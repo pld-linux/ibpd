@@ -1,13 +1,12 @@
 Summary:	InfiniBand Proxy Daemon
 Summary(pl.UTF-8):	InfiniBand Proxy Daemon - demon proxy IB
 Name:		ibpd
-Version:	1.0.0
-%define	subver	2
-Release:	2
+Version:	1.0.1
+Release:	1
 License:	GPL v2 or BSD
 Group:		Daemons
-Source0:	https://www.openfabrics.org/downloads/ibpd/%{name}-%{version}-%{subver}.tar.gz
-# Source0-md5:	875113f31fb93e9488dede2b21c7c508
+Source0:	https://www.openfabrics.org/downloads/ibpd/%{name}-%{version}.tar.gz
+# Source0-md5:	688c17adf3b4f591ca3999043f9f29a2
 URL:		http://www.intel.com/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -20,22 +19,24 @@ IB Proxy Daemon (ibpd) to proces przestrzeni użytkownika dla urządzeń
 proxy InfiniBand.
 
 %prep
-%setup -q -n %{name}-%{version}-%{subver}
+%setup -q
 
 %build
-%{__make} ibpd \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} %{rpmcppflags} %{rpmldflags}"
+%configure \
+	--disable-silent-rules
+
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -D ibpd $RPM_BUILD_ROOT%{_sbindir}/ibpd
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS README
+%doc AUTHORS COPYING README
 %attr(755,root,root) %{_sbindir}/ibpd
